@@ -120,7 +120,7 @@ class ReorderableItemsView extends StatefulWidget {
 
   final VoidCallback? onDragStart;
   final VoidCallback? onDragEnd;
-  final ValueChanged<DragUpdateDetails>? onDragUpdate;
+  final Function(DragUpdateDetails details)? onDragUpdate;
 
   @override
   _ReorderableItemsViewState createState() => _ReorderableItemsViewState();
@@ -229,7 +229,7 @@ class _ReorderableListContent extends StatefulWidget {
   final double mainAxisSpacing;
   final double crossAxisSpacing;
   final VoidCallback onDragStart;
-  final ValueChanged<DragUpdateDetails> onDragUpdate;
+  final Function(DragUpdateDetails details) onDragUpdate;
   final VoidCallback onDragEnd;
   final IndexedFeedBackWidgetBuilder? feedBackWidgetBuilder;
 
@@ -623,6 +623,9 @@ class _ReorderableListContentState extends State<_ReorderableListContent>
                   : toWrapWithSemantics,
               childWhenDragging: const SizedBox(),
               dragAnchor: DragAnchor.child,
+              onDragUpdate: (details) {
+                widget.onDragUpdate(details);
+              },
               onDragStarted: onDragStarted,
               // When the drag ends inside a DragTarget widget, the drag
               // succeeds, and we reorder the widget into position appropriately.
