@@ -39,6 +39,9 @@ class ReorderableItemsView extends StatefulWidget {
     this.mainAxisSpacing = 0.0,
     this.crossAxisSpacing = 0.0,
     this.feedBackWidgetBuilder,
+    this.onDragStart,
+    this.onDragEnd,
+    this.onDragUpdate,
   })  : assert(scrollDirection != null),
         assert(onReorder != null),
         assert(children != null),
@@ -112,7 +115,12 @@ class ReorderableItemsView extends StatefulWidget {
   /// Used when we are building a GridView
   final double crossAxisSpacing;
 
+  /// The widget displayed on screen while dragging
   final IndexedFeedBackWidgetBuilder? feedBackWidgetBuilder;
+
+  final VoidCallback? onDragStart;
+  final VoidCallback? onDragEnd;
+  final ValueChanged<DragUpdateDetails>? onDragUpdate;
 
   @override
   _ReorderableItemsViewState createState() => _ReorderableItemsViewState();
@@ -156,6 +164,21 @@ class _ReorderableItemsViewState extends State<ReorderableItemsView> {
           mainAxisSpacing: widget.mainAxisSpacing,
           crossAxisSpacing: widget.crossAxisSpacing,
           feedBackWidgetBuilder: widget.feedBackWidgetBuilder,
+          onDragStart: () {
+            if (widget.onDragStart != null) {
+              widget.onDragStart!();
+            }
+          },
+          onDragEnd: () {
+            if (widget.onDragEnd != null) {
+              widget.onDragEnd!();
+            }
+          },
+          onDragUpdate: (DragUpdateDetails value) {
+            if (widget.onDragUpdate != null) {
+              widget.onDragUpdate!(value);
+            }
+          },
         );
       },
     );
@@ -187,6 +210,9 @@ class _ReorderableListContent extends StatefulWidget {
     required this.mainAxisSpacing,
     required this.crossAxisSpacing,
     required this.feedBackWidgetBuilder,
+    required this.onDragStart,
+    required this.onDragUpdate,
+    required this.onDragEnd,
   });
 
   final Widget? header;
@@ -202,6 +228,9 @@ class _ReorderableListContent extends StatefulWidget {
   final bool longPressToDrag;
   final double mainAxisSpacing;
   final double crossAxisSpacing;
+  final VoidCallback onDragStart;
+  final ValueChanged<DragUpdateDetails> onDragUpdate;
+  final VoidCallback onDragEnd;
   final IndexedFeedBackWidgetBuilder? feedBackWidgetBuilder;
 
   @override
@@ -403,6 +432,7 @@ class _ReorderableListContentState extends State<_ReorderableListContent>
 
     // Starts dragging toWrap.
     void onDragStarted() {
+      widget.onDragStart();
       setState(() {
         _dragging = toWrap.key;
         _dragStartIndex = index;
@@ -426,6 +456,7 @@ class _ReorderableListContentState extends State<_ReorderableListContent>
 
     // Drops toWrap into the last position it was hovering over.
     void onDragEnded() {
+      widget.onDragEnd();
       reorder(_dragStartIndex, _currentIndex);
     }
 
@@ -554,7 +585,12 @@ class _ReorderableListContentState extends State<_ReorderableListContent>
                   : toWrapWithSemantics,
               childWhenDragging: const SizedBox(),
               dragAnchor: DragAnchor.child,
-              onDragStarted: onDragStarted,
+              onDragUpdate: (details) {
+                widget.onDragUpdate(details);
+              },
+              onDragStarted: () {
+                onDragStarted();
+              },
               // When the drag ends inside a DragTarget widget, the drag
               // succeeds, and we reorder the widget into position appropriately.
               onDragCompleted: onDragEnded,
@@ -717,7 +753,6 @@ class _ReorderableListContentState extends State<_ReorderableListContent>
 }
 
 class StaggeredTileExtended extends StaggeredTile {
-    StaggeredTileExtended.count(
-      int crossAxisCellCount, num mainAxisCellCount)
+  StaggeredTileExtended.count(int crossAxisCellCount, num mainAxisCellCount)
       : super.count(crossAxisCellCount, mainAxisCellCount.toDouble());
 }
