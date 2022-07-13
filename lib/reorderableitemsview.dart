@@ -586,6 +586,7 @@ class _ReorderableListContentState extends State<_ReorderableListContent>
               childWhenDragging: const SizedBox(),
               dragAnchor: DragAnchor.child,
               onDragUpdate: (details) {
+                print("details longp : ${details.globalPosition}");
                 widget.onDragUpdate(details);
               },
               onDragStarted: () {
@@ -624,6 +625,7 @@ class _ReorderableListContentState extends State<_ReorderableListContent>
               childWhenDragging: const SizedBox(),
               dragAnchor: DragAnchor.child,
               onDragUpdate: (details) {
+                print("details draggable : ${details.globalPosition}");
                 widget.onDragUpdate(details);
               },
               onDragStarted: onDragStarted,
