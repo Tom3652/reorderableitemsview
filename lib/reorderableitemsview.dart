@@ -564,7 +564,7 @@ class _ReorderableListContentState extends State<_ReorderableListContent>
       // constrain the size of the feedback dragging widget.
       Widget child = widget.longPressToDrag
           ? LongPressDraggable<Key>(
-              maxSimultaneousDrags: 2,
+              maxSimultaneousDrags: 1,
               axis: null,
               data: toWrap.key,
               hapticFeedbackOnStart: true,
