@@ -118,7 +118,7 @@ class ReorderableItemsView extends StatefulWidget {
   /// The widget displayed on screen while dragging
   final IndexedFeedBackWidgetBuilder? feedBackWidgetBuilder;
 
-  final VoidCallback? onDragStart;
+  final Function(int index)? onDragStart;
   final VoidCallback? onDragEnd;
   final Function(DragUpdateDetails details)? onDragUpdate;
 
@@ -164,9 +164,9 @@ class _ReorderableItemsViewState extends State<ReorderableItemsView> {
           mainAxisSpacing: widget.mainAxisSpacing,
           crossAxisSpacing: widget.crossAxisSpacing,
           feedBackWidgetBuilder: widget.feedBackWidgetBuilder,
-          onDragStart: () {
+          onDragStart: (index) {
             if (widget.onDragStart != null) {
-              widget.onDragStart!();
+              widget.onDragStart!(index);
             }
           },
           onDragEnd: () {
@@ -228,7 +228,7 @@ class _ReorderableListContent extends StatefulWidget {
   final bool longPressToDrag;
   final double mainAxisSpacing;
   final double crossAxisSpacing;
-  final VoidCallback onDragStart;
+  final Function(int index) onDragStart;
   final Function(DragUpdateDetails details) onDragUpdate;
   final VoidCallback onDragEnd;
   final IndexedFeedBackWidgetBuilder? feedBackWidgetBuilder;
@@ -432,7 +432,7 @@ class _ReorderableListContentState extends State<_ReorderableListContent>
 
     // Starts dragging toWrap.
     void onDragStarted() {
-      widget.onDragStart();
+      widget.onDragStart(index);
       setState(() {
         _dragging = toWrap.key;
         _dragStartIndex = index;
@@ -625,7 +625,6 @@ class _ReorderableListContentState extends State<_ReorderableListContent>
               childWhenDragging: const SizedBox(),
               dragAnchor: DragAnchor.child,
               onDragUpdate: (details) {
-                print("details draggable : ${details.globalPosition}");
                 widget.onDragUpdate(details);
               },
               onDragStarted: onDragStarted,
