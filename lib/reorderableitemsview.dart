@@ -3,7 +3,6 @@ library reorderableitemsview;
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
@@ -98,7 +97,7 @@ class ReorderableItemsView extends StatefulWidget {
   final ReorderCallback onReorder;
 
   /// Used when we are building a GridView
-  final List<StaggeredTile>? staggeredTiles;
+  final List<StaggeredGridTile>? staggeredTiles;
 
   /// Used when we are building a GridView
   final int crossAxisCount;
@@ -222,7 +221,7 @@ class _ReorderableListContent extends StatefulWidget {
   final EdgeInsets? padding;
   final ReorderCallback onReorder;
   final bool reverse;
-  final List<StaggeredTile>? staggeredTiles;
+  final List<StaggeredGridTile>? staggeredTiles;
   final int crossAxisCount;
   final bool isGrid;
   final bool longPressToDrag;
@@ -402,12 +401,8 @@ class _ReorderableListContentState extends State<_ReorderableListContent>
     }
 
     if (widget.isGrid)
-      return StaggeredGridView.count(
-        shrinkWrap: true,
-        primary: false,
-        physics: NeverScrollableScrollPhysics(),
+      return StaggeredGrid.count(
         crossAxisCount: widget.crossAxisCount,
-        staggeredTiles: widget.staggeredTiles!,
         children: children as List<Widget>,
         mainAxisSpacing: widget.mainAxisSpacing,
         crossAxisSpacing: widget.crossAxisSpacing,
@@ -534,7 +529,7 @@ class _ReorderableListContentState extends State<_ReorderableListContent>
       if (widget.isGrid &&
           _dragging == null &&
           index < widget.staggeredTiles!.length) {
-        final StaggeredTile tile = widget.staggeredTiles![index];
+        final StaggeredGridTile tile = widget.staggeredTiles![index];
 
         final double usableCrossAxisExtent = constraints.biggest.width;
         final double cellExtent = usableCrossAxisExtent / widget.crossAxisCount;
@@ -623,7 +618,6 @@ class _ReorderableListContentState extends State<_ReorderableListContent>
                   ? const SizedBox()
                   : toWrapWithSemantics,
               childWhenDragging: const SizedBox(),
-              dragAnchor: DragAnchor.child,
               onDragUpdate: (details) {
                 widget.onDragUpdate(details);
               },
@@ -756,7 +750,7 @@ class _ReorderableListContentState extends State<_ReorderableListContent>
   }
 }
 
-class StaggeredTileExtended extends StaggeredTile {
-  StaggeredTileExtended.count(int crossAxisCellCount, num mainAxisCellCount)
-      : super.count(crossAxisCellCount, mainAxisCellCount.toDouble());
+class StaggeredTileExtended extends StaggeredGridTile {
+  StaggeredTileExtended.count(int crossAxisCellCount, num mainAxisCellCount, child)
+      : super.count(crossAxisCellCount: crossAxisCellCount, mainAxisCellCount: mainAxisCellCount, child: child);
 }
